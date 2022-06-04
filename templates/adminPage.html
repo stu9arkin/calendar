@@ -1,0 +1,31 @@
+<html><head>
+    <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/adminPage.css') }}">
+</head><body>
+    {% if session["signUpError"]|length > 0 %}<div class="error">{{ session["signUpError"] }}</div>{% endif %}
+    <div class="createTutor">
+        <h2>Create new tutor account:</h2>
+        <form action="{{ url_for('tutorSignUp') }}" method="post">
+            <label>Username:</label><br><input type="text" name="userName"><br>
+            <label>Email:</label><br><input type="text" name="email"><br>
+            <label>Password:</label><br><input type="password" name="passWord"><br>
+            <label>First Name:</label><br><input type="text" name="fName"><br>
+            <label>Last Name:</label><br><input type="text" name="lName"><p>
+				<input type="submit" value="Sign up">
+        </form>
+    </div>
+    <div class="tutorList">
+        <table>
+            <tr><th>Tutor name:</th><th>Total Current Bookings:</th></tr>
+            {% for i in tutors %}
+                {% set teacherName = i[0] + " " + i[1] %}
+                {% set totalCount = bookingTotal[loop.index-1] %}
+                <tr>
+                    <td>{{ teacherName }}</td>
+                    <td>{{ totalCount }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+<a href="{{ url_for('index') }}">Log out</a>
+</body>
+</html>

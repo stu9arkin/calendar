@@ -1,0 +1,12 @@
+<link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/login.css') }}">
+
+<body>
+<div class="container">
+	<center><h1>Login</h1>
+	<form action="{{ url_for('loginAuth') }}" method="post">
+		Username:<input type="text" name="userName"><p>
+		Password:<input type="password" name="passWord"><p>
+		<input type="submit" value="Login"><br>
+	</form>
+	<a href="{{ url_for('signUp') }}">Sign Up</a></center>
+</div>

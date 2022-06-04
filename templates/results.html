@@ -1,0 +1,27 @@
+<!DOCTYPE html><head>
+    <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/results.css') }}">
+</head>
+<body>
+<div class="topBar">
+    <a href="{{ url_for('main') }}">Return to main page</a>
+</div>
+<h1>Search results for "{{ searchTerm }}":</h1>
+{% for result in results %}
+    {% if session["accType"] == "student" %}
+        {% if result[7] != "Reserved" %}
+            <div class="searchResult">
+                <b>Tutor:</b> {{ result[3].title() }}, <b>Subject:</b> {{ result[7] }}, <b>Time Slot:</b> {{ timeSlots[result[6] - 1] }}<br>
+                <b>Contact Tutor:</b> {{ result[4] }}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if result[7] != "Reserved" %}
+            <div class="searchResult">
+                <b>Student:</b> {{ result[0].title() }}, <b>Subject:</b> {{ result[7] }}, <b>Time Slot:</b> {{ timeSlots[result[6] - 1] }}, <b>Date:</b> {{ result[5] }}<br>
+                <b>Contact Student:</b> {{ result[1] }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+</body>

@@ -1,0 +1,35 @@
+<body>
+    {{ error }}
+    <form action="{{ url_for('deleteBookingAuth') }}" method="post">
+        SlotNo:<input type="text" name="slotNo"><br>
+        Date:<select name="date-day">
+                {% for i in range(1,32) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <select name="date-month">
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select name="date-year">
+                {% for i in range(1950, 2019) %}
+                    {% if i == 2018 %}
+                        <option value="{{ i }}" selected="selected">{{ i }}</option>
+                    {% else %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select><br>
+        <input type="submit" value="Delete Booking">
+    </form>
+</body>

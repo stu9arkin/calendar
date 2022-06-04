@@ -1,0 +1,219 @@
+body{
+    margin-top: 0px;
+     margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding: 0px;
+	font-family: arial, courier;
+	color: black;
+	background-color: #f5f6fa;
+}
+
+.addSubjectButton{
+    display: inline-block;
+    padding: 5px;
+    color: white;
+    border-radius: 4px;
+    background-color: green;
+    margin-top: 5px;
+    width: 90px;
+}
+
+.addSubjectButton:hover{
+    cursor: pointer;
+}
+
+.addSubjectBox{
+    visibility: hidden;
+    position: absolute;
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    left: 40%;
+    top: 40%;
+}
+
+.bookingInfoBox{
+    width: 40%;
+    background-color: white;
+    visibility: hidden;
+    position: absolute;
+    padding: 5px;
+    border-radius: 5px;
+    left: 20%;
+    top: 20%;
+    box-shadow: 3px 3px 1px grey;
+}
+
+.createBookingButton{
+    display: inline-block;
+    padding: 5px;
+    color: white;
+    border-radius: 4px;
+    background-color: green;
+    margin-top: 5px;
+    width: 115px;
+}
+.createBookingButton:hover{
+    cursor: pointer;
+}
+
+.createBookingBox{
+    width: 40%;
+    visibility: hidden;
+    position: absolute;
+    background-color: #f5f6fa;
+    padding: 5px;
+    border-radius: 5px;
+    left: 40%;
+    top: 40%;
+    box-shadow: 3px 3px 1px grey;
+}
+
+select{
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+}
+
+input[type=text]{
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+input[type=submit]{
+    padding: 5px;
+    background-color: #27ae60;
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+}
+
+.timeTable{
+    background-color: #f5f6fa;
+}
+
+table{
+    border-collapse: collapse;
+    border: 1px solid #bdc3c7;
+    border-top: 0px;
+}
+
+.search{
+    position: absolute;
+    display: inline-block;
+    padding: 5px;
+    width: initial;
+}
+
+.skipButtons{
+    z-index: 10;
+    margin-bottom: 10px;
+    box-shadow: 0px 5px 5px #7f8c8d;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    cursor: pointer;
+}
+
+.skipButtons input{
+    height: 50px;
+    background-color: #f5f6fa;
+    font-size: 200%;
+    color: #7f8c8d;
+}
+
+.skipLeft{
+    margin-right: 5%;
+}
+
+.skipLeft input{
+    border: 1px solid #dfe4ea;
+    border-radius: 5px;
+    width: 50px;
+    cursor: pointer;
+}
+
+.skipReset{
+    width: 500px;
+}
+
+.skipReset input{
+    border: 0px;
+    font-size: 150%;
+    cursor: pointer;
+}
+
+.skipRight{
+    margin-left: 5%;
+}
+
+.skipRight input{
+    border: 1px solid #dfe4ea;
+    border-radius: 5px;
+    width: 50px;
+    cursor: pointer;
+}
+
+th{
+    background-color: #f5f6fa;
+    height: 50px;
+    border: 0px solid;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bdc3c7;
+}
+
+.currentDayMarker{
+    border-bottom: 2px solid red;
+}
+
+td{
+    cursor: pointer;
+    width: 12.5%;
+    height : 60px;
+    padding: 5px;
+}
+
+.emptyCell{
+    background-color: #f5f6fa;
+    color: white;
+}
+
+.emptyCell:hover{
+    background-color: #dcdde1;
+}
+
+.dataCell{
+    background-color: #487eb0;
+    color: white;
+}
+
+.dataCell:hover{
+    background-color: #40739e;
+}
+
+.timeCell{
+    background-color: #f5f6fa;
+    width: 50px;
+    font-size: 75%;
+    text-align: center;
+}
+
+.skipLeft, .skipRight, .skipReset, .CTimeSlot, .Cdate-day, .Cdate-month, .Cdate-year{
+    display: inline-block;
+}
+
+.cancelButton{
+    cursor: pointer;
+    font-size: 75%;
+    background-color: #c0392b;
+    padding: 5px;
+    border-radius: 3px;
+    width: 40px;
+}
+
+.error{
+    color: white;
+    background-color: red;
+    padding: 5px;
+    border-radius: 5px;
+}

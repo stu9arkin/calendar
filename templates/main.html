@@ -1,0 +1,260 @@
+<html><head>
+	<link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/main.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='Scripts/jquery-3.3.1.min.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            var date = new Date();
+            var weekStart = new Date();
+
+            var Row = 0;
+
+            var months = {{ months|tojson }};
+
+            weekStart.setFullYear({{ weekStartDate[:4] }});
+            weekStart.setMonth({{ weekStartDate[6:7] }});
+            weekStart.setDate({{ weekStartDate[8:] }});
+
+            $(".addSubjectButton").click(function(){
+                $(".createBookingBox").css("visibility", "hidden");
+                $(".addSubjectBox").css("visibility", "visible");
+            });
+
+            $(".emptyCell").click(function() {
+                var ableTeachers = [];
+                var subjectTeachers = {{ subjectTeachers|tojson }};
+                for(i in subjectTeachers){
+                    if(subjectTeachers[i][3] == $("div.subjectSelect select").val()){
+                        ableTeachers.push(subjectTeachers[i][1] + " " + subjectTeachers[i][2]);
+                    }
+                }
+                $("div.teacherSelect select").empty();
+                for(x in ableTeachers){
+                    $("div.teacherSelect select").append("<option value='" + ableTeachers[x] + "'>" + ableTeachers[x] + "</option>");
+                }
+
+                var selectedDate = new Date();
+                var Col = $(this).index();
+                var $tr = $(this).closest('tr');
+                var Row = $tr.index();
+
+                selectedDate.setDate(weekStart.getDate() + (Col - 1));
+                selectedDate.setMonth(weekStart.getMonth() - 1);
+
+                $(".addSubjectBox").css("visibility", "hidden");
+                $(".bookingInfoBox").css("visibility", "hidden");
+                $(".createBookingBox").css("visibility", "visible");
+
+                $("div.Cdate-day select").val(selectedDate.getDate());
+                $("div.Cdate-month select").val(months[selectedDate.getMonth()]);
+                $("div.Cdate-year select").val(selectedDate.getFullYear());
+
+                $("div.CSlotNo select").val(Row);
+
+                $("div.subjectSelect select").change(function(){
+                    var ableTeachers = [];
+                    var subjectTeachers = {{ subjectTeachers|tojson }};
+                    for(i in subjectTeachers){
+                        if(subjectTeachers[i][3] == $("div.subjectSelect select").val()){
+                            ableTeachers.push(subjectTeachers[i][1] + " " + subjectTeachers[i][2]);
+                        }
+                    }
+                    $("div.teacherSelect select").empty();
+                    for(x in ableTeachers){
+                        $("div.teacherSelect select").append("<option value='" + ableTeachers[x] + "'>" + ableTeachers[x] + "</option>");
+                    }
+                });
+            });
+
+            $(".dataCell").click(function(){
+                var selectedDate = new Date();
+                var Col = $(this).index();
+                var $tr = $(this).closest('tr');
+                var Row = $tr.index();
+                var tableData = {{ tableData|tojson }}
+                $(".createBookingBox").css("visibility", "hidden");
+                $(".addSubjectBox").css("visibility", "hidden");
+                $(".bookingInfoBox").css("visibility", "visible");
+
+                selectedDate.setDate(weekStart.getDate() + (Col - 1));
+
+                slotTimes = {{ slotTimes|tojson }};
+                selectionTime = slotTimes[Row-1];
+
+                selectionData = tableData[Row-1][Col-1];
+
+                users = {{ users|tojson }};
+
+                for(var x in users){
+                    if(users[x][0] + " " + users[x][1] == selectionData[1]){
+                        var email = users[x][3];
+                    }
+                    else if(users[x][0] == selectionData[0] && users[x][1] == ""){
+                        var email = users[x][2];
+                        var addressLn1 = users[x][3];
+                        var addressLn2 = users[x][4];
+                    }
+                }
+
+                dataCellName = document.getElementsByClassName("bookingInfoBox");
+                dataCellName[0].innerHTML = "<h2>Booking Information</h2><b>Date: </b>" + selectedDate.getDate() + "-" + (selectedDate.getMonth() + 1) + "-" + selectedDate.getFullYear() + "<br><b>Time: </b>" + selectionTime + '{% if session["accType"] == "student" %}<br><b>Tutor email: </b>' + email{% else %}<br><b>Student email: </b>' + email + '<br><b>Address: </b>' + addressLn1 + ", " + addressLn2{% endif %} + '<div class="cancelButton">Cancel</div>';
+
+                $(".cancelButton").click(function(){
+                    $(".createBookingBox").css("visibility", "hidden");
+                    $(".addSubjectBox").css("visibility", "hidden");
+                    $(".bookingInfoBox").css("visibility", "hidden");
+                });
+            });
+
+            $(".cancelButton").click(function(){
+                $(".createBookingBox").css("visibility", "hidden");
+                $(".addSubjectBox").css("visibility", "hidden");
+                $(".bookingInfoBox").css("visibility", "hidden");
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="bookingInfoBox">
+    <div class="cancelButton">Cancel</div>
+</div>
+<div class="deleteBookingBox">
+
+</div>
+<div class="addSubjectBox">
+    <form action="{{ url_for('addSubject') }}" method="post">
+        Subject Name:<input type="text" name="subject"><br>
+        <input type="submit" value="Add Subject"><br>
+        <div class="cancelButton">Cancel</div>
+    </form>
+</div>
+<div class="createBookingBox">
+    <form action="{{ url_for('createBooking') }}" method="post">
+        {% if session["accType"] != "tutor" %}
+            <h2>Create Booking</h2>
+            <input type="text" name="studentID" value="{{ session['studentID'] }}" style="display: none">
+        {% else %}
+            <h2>Create Reservation</h2>
+            <input type="text" name="studentID" value="1" style="visibility: hidden">
+            <input type="text" name="teacherName" value="{{ session['tutorName'] }}" style="visibility: hidden">{{ session['tutorname'] }}
+        {% endif %}
+
+        </select><br>
+            <div class="CSlotNo">Time Slot:
+                <select name="slotNo">
+                    {% for i in range(slotTimes|length) %}
+                        <option value="{{ i + 1 }}">{{ slotTimes[i] }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+        Date:
+            <div class="Cdate-day">
+                <select name="date-day">
+                    {% for i in range(1,32) -%}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {%- endfor %}
+                </select>
+            </div>
+            <div class="Cdate-month">
+                <select name="date-month">
+                    {% for i in months -%}
+                        <option name="{{ loop.index }}">{{ i }}</option>
+                    {%- endfor %}
+                </select>
+            </div>
+            <div class="Cdate-year">
+                <select name="date-year">
+                    {% for i in range(2018, 2021) -%}
+                        {% if i == 2018 %}
+                            <option value="{{ i }}" selected="selected">{{ i }}</option>
+                        {% else %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endif %}
+                    {%- endfor %}
+                </select>
+            </div>
+        <br>
+        {% if session["accType"] == "student" %}
+            <br><div class="subjectSelect">Subject:<select name="subject">
+                {% for i in subjects %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select></div><p>
+        {% else %}
+            <input type="text" name="subject" value="Reserved" style="visibility: hidden">
+        {% endif %}
+        {% if session["accType"] == "student" %}
+            <div class="teacherSelect">Tutor:<select name="teacherName">
+                {% for i in users %}
+                    <option value="{{ i[0] + ' ' + i[1] }}">{{ i[0] + " " + i[1] }}</option>
+                {% endfor %}
+            </select></div>
+        {% else %}
+            <div class="teacherSelect" style="visibility: hidden"><input type="text" value="{{ session['tutorName'] }}"></div>
+        {% endif %}
+        <br><input type="submit" value="submit"><div class="cancelButton">Cancel</div>
+    </form>
+</div>
+<div class="timeTable">
+    <div class="search">
+        <form action="{{ url_for('searchBookings') }}" method="post">
+            <input type="text" name="searchTerm" placeholder="Search date e.g. 28/07/2018"> <input type="submit" value="Search >"><p>
+        </form>
+    </div>
+
+    <center><div class="skipButtons"><div class="skipLeft"><form action="{{ url_for('skipLeft') }}"><input type="submit" value="<"></form></div> <div class="skipReset"><form action="{{ url_for('resetSkip') }}"><input type="submit" value="{% set monthNum = weekStartDate[5:7]|int - 1 %}Week Beginning {{ weekStartDate[-2:] }} {{ months[monthNum] }} {{ weekStartDate[:4] }}"></form></div> <div class="skipRight"><form action="{{ url_for('skipRight') }}"><input type="submit" value=">"></form></div></div></center>
+        {% if session["bookingError"]|length > 0 %}<div class="error">
+            {{ session["bookingError"] }}
+        </div>{% endif %}
+        {% if session["subjectError"]|length > 0 %}<div class="error">
+            {{ session["subjectError"] }}
+        </div>{% endif %}
+        {% if session["searchError"]|length > 0 %}<div class="error">
+            {{ session["searchError"] }}
+        </div>{% endif %}
+
+    <table width="100%" border="1">
+        <tr>
+            <th></th>
+            {% for day in days %}
+                {% if day == days[currentDay] %}
+                    <th class="currentDayMarker">{{ day }}</th>
+                {% else %}
+                    <th>{{ day }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% if tableData|length == 0 %}
+            {% for i in range(maxDays) %}
+                <tr>
+                    <td class="timeCell">{{ slotTimes[loop.index - 1] }}</td>
+                    {{ slotTimes[loop.index-1] }}
+                    {% for j in range(maxSlots) %}
+                        <td class="emptyCell"></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% for x in tableData %}
+        <tr>
+            <td class="timeCell">{{ slotTimes[loop.index - 1] }}</td>
+            {% for y in x %}
+                {% if y|length > 0 %}
+                    {% if session["accType"] == "student" %}
+                        <td class="dataCell">{{ y[2] }}<br>{{ y[1] }}</td>
+                    {% else %}
+                        <td class="dataCell">{{ y[0] }}<br>{{ y[2] }}</td>
+                    {% endif %}
+                {% else %}
+                    <td class="emptyCell"></td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% if session["accType"] == "tutor" %}
+    <div class="addSubjectButton">Add Subject</div>
+{% endif %}
+<a href="{{ url_for('index') }}">Logout</a>
+</body>
+</html>

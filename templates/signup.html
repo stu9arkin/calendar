@@ -1,0 +1,21 @@
+<link rel="stylesheet" type=text/css href="{{ url_for('static', filename='css/login.css') }}">
+
+<body>
+{% if session["signUpError"]|length > 0 %}<div class="error">{{ session["signUpError"] }}</div>{% endif %}
+<div class="container"><center>
+	<table>
+		<tr><th><h1>Student Signup</h1></th></tr>
+		<tr>
+			<td><form action="{{ url_for('studentSignUp') }}" method="post"><center>
+				Username:<br><input type="text" name="userName"><br>
+				First Name:<br><input type="text" name="firstName"><br>
+				Email:<br><input type="text" name="email"><br>
+				Password:<br><input type="password" name="passWord"><br>
+				Address Line 1:<br><input type="text" name="addressLn1"><br>
+				Address Line 2:<br><input type="text" name="addressLn2"><p>
+				<input type="submit" value="Sign up">
+			</center></form></td>
+		</tr>
+	</table>
+</center></div>
+<br><center><a href="{{ url_for('index') }}">Login</a></center>
