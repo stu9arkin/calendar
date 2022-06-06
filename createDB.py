@@ -1,7 +1,9 @@
 import sqlite3 as sql
 
 def createTables():
-    conn = sql.connect("database.db")
+    times = ["8:00-9:00", "9:30-10:30", "11:00-12:00", "12:30-13:30", "14:00-15:00", "15:30-16:30", "17:00-18:00"]
+
+    conn = sql.connect("database.db") 
     c = conn.cursor()
 
     c.execute("PRAGMA foreign_keys = ON;")
@@ -47,16 +49,18 @@ def createTables():
         Subject varchar(50) NOT NULL,
         FOREIGN KEY(TeacherID) REFERENCES Teachers(TeacherID));""")
 
+    for i in times:
+        c.execute("INSERT INTO Day(Time) Values(?)", (i,))
+    
+    conn.commit()
     conn.close()
 
 def populateDayTable():
-    print("adding days")
-    conn = sql.connect("database.db")
+    conn = sql.connect("database.db") 
     c = conn.cursor()
     times = ["8:00-9:00", "9:30-10:30", "11:00-12:00", "12:30-13:30", "14:00-15:00", "15:30-16:30", "17:00-18:00"]
 
     for i in times:
-        print(i)
         c.execute("INSERT INTO Day(Time) Values(?)", (i,))
         conn.commit()
 

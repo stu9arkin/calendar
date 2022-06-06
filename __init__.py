@@ -20,8 +20,7 @@ def dated_url_for(endpoint, **values):
     if endpoint == 'static':
         filename = values.get('filename', None)
         if filename:
-            file_path = os.path.join(app.root_path,
-                                     endpoint, filename)
+            file_path = os.path.join(app.root_path, endpoint, filename)
             values['q'] = int(os.stat(file_path).st_mtime)
     return url_for(endpoint, **values)
 
@@ -34,22 +33,19 @@ def dbClose(conn):
     conn.close()
 
 def createDatabase():
-    #Creates tables in database.db
+    #Creates and populate tables in database.db
     createTables()
     conn = dbConnect()
     getDayTable = conn.execute("SELECT * FROM Day;")
     if len(getDayTable.fetchall()) == 0:
         populateDayTable()
-    dbClose(conn)
 
-    conn = dbConnect()
     conn.execute("INSERT INTO Admins(Username, Password) VALUES('admin', '$pbkdf2-sha256$29000$3Nt7L4UQAiBE6P2/l5ISQg$HENFx.IA43NYaygyQH4Ujl.ehegudlJ9akdrmVqtsu8');")
     dbClose(conn)
 
 @app.route("/")
 def index():
-    #Handles the user connecting to website. All session variables are cleared, and a DB is created if not already present. Returns the template login.html.
-    createDatabase()
+    #Handles the user connecting to website. All session variables are cleared. Returns the template login.html.
     session.clear()
 
     return render_template("login.html")
@@ -130,7 +126,7 @@ def tutorSignUp():
         return redirect(url_for("adminPage"))
 
 def signUpAuth(userName, firstName, email, passWord, addressLn1, addressLn2, fName, lName, accType):
-    #Determine if the user's input from the signup forms is a duplicate if a pre-existing account.
+    #Determine if the user's input from the signup forms is a duplicate of a pre-existing account.
     #If it is, return the signup.html page, otherwise return the login.html page.
     if "signUpError" in session:
         session.pop("signUpError", None)
@@ -149,20 +145,17 @@ def signUpAuth(userName, firstName, email, passWord, addressLn1, addressLn2, fNa
     if len(formatExisting) > 0:
         return False
     else:
+        conn = dbConnect()
         if table == "Students":
-            conn = dbConnect()
             conn.execute("INSERT INTO Students(Username, Email, Firstname, Password, AddressLine1, AddressLine2) Values(?, ?, ?, ?, ?, ?);", (userName, email, firstName, passHash, addressLn1, addressLn2,))
-            conn.commit()
-            dbClose(conn)
             return True
 
         if table == "Teachers":
-            conn = dbConnect()
             conn.execute("INSERT INTO Teachers(Username, Email, Password, FirstName, LastName) Values(?, ?, ?, ?, ?);", (userName, email, passHash, fName,  lName))
-            conn.commit()
-            dbClose(conn)
             return True
-    dbClose(conn)
+
+        conn.commit()
+        dbClose(conn)
 
 @app.route("/adminPage")
 def adminPage():
@@ -236,7 +229,11 @@ def main():
         rowData.append(["", "", "", "", "", "", ""])
 
     for i in weekBookingsData: #Set specific items of rowData to hold data about sessions
-        weekDay = datetime.datetime(int(str(i[3])[:4]),int(str(i[3])[5:7]),int(str(i[3])[8:10]), 12, 00, 000000).weekday()
+        dateString = str(i)
+        year = dateString[:4]
+        month = dateString[5:7]
+        day = dateString[8:10]
+        weekDay = datetime.datetime(year, month, day, 12, 00, 000000).weekday()
         slot = i[4]
         for x in range(0, 8): #Row in the table
             for y in range(0, 8): #Column/day in the table
@@ -516,7 +513,7 @@ def searchBookings():
         dictKey = Date + ":" + str(SlotNo)
         dates[dictKey] = i
 
-    sortedKeys = MergeSort(list(dates.keys()))
+    sortedKeys = sort(list(dates.keys()))
     searchedKeys = binarySearch(searchTerm, sortedKeys, len(sortedKeys) // 2, "")
 
     if len(searchedKeys) != 0:
@@ -542,7 +539,7 @@ def searchBookings():
             else:
                 searchRight = False
 
-    searchedKeys = MergeSort(searchedKeys)
+    searchedKeys = sort(searchedKeys)
 
     searchResults = []
 
@@ -588,32 +585,7 @@ def binarySearch(SearchTerm, data, total, side):
                 recursionType = "more"
                 return binarySearch(SearchTerm, data[Mid:], total, recursionType)
 
-def MergeSort(mergedList):
-    if len(mergedList) > 1:
-        mid = len(mergedList) // 2
-        leftList = mergedList[:mid]
-        rightList = mergedList[mid:]
-        MergeSort(leftList)
-        MergeSort(rightList)
-        i, j, k = 0,0,0
-        while i < len(leftList) and j < len(rightList):
-              if leftList[i] < rightList[j]:
-                    mergedList[k] = leftList[i]
-                    i += 1
-              else:
-                    mergedList[k] = rightList[j]
-                    j += 1
-              k += 1
-
-        while i < len(leftList):
-              mergedList[k] = leftList[i]
-              i += 1
-              k += 1
-        while j < len(rightList):
-              mergedList[k] = rightList[j]
-              j += 1
-              k += 1
-    return mergedList
-
 if __name__ == "__main__":
+    #Create database and populate Day table, then run the Flask app
+    createDatabase()
     app.run()
